@@ -1,6 +1,6 @@
 'use client';
 
-import { Brain, Check, ChevronDown, Copy, ExternalLink, Github, MessageSquare, MessagesSquare, Sparkles } from 'lucide-react';
+import { Brain, Check, ChevronDown, Copy, ExternalLink, Github, MessageSquare, MessagesSquare, Sparkles, Zap } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface CopyOpenInAIProps {
@@ -15,14 +15,19 @@ const AI_TOOLS = [
     getUrl: (pageUrl: string) => pageUrl
   },
   { 
-    name: 'Open in Scira AI', 
-    icon: Sparkles,
-    getUrl: (pageUrl: string) => `https://scira.ai/?q=${encodeURIComponent(`Read ${pageUrl}, I want to ask questions about it`)}`
-  },
-  { 
     name: 'Open in ChatGPT', 
     icon: MessageSquare,
     getUrl: (pageUrl: string) => `https://chat.openai.com/?q=${encodeURIComponent(`Read ${pageUrl}, I want to ask questions about it`)}`
+  },
+  { 
+    name: 'Open in Gemini', 
+    icon: Sparkles,
+    getUrl: (pageUrl: string) => `https://gemini.google.com/?q=${encodeURIComponent(`Read ${pageUrl}, I want to ask questions about it`)}`
+  },
+  { 
+    name: 'Open in Grok', 
+    icon: Zap,
+    getUrl: (pageUrl: string) => `https://grok.x.ai/?q=${encodeURIComponent(`Read ${pageUrl}, I want to ask questions about it`)}`
   },
   { 
     name: 'Open in Claude', 
