@@ -1,9 +1,10 @@
-import { getPageImage, source } from '@/lib/source';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
-import { notFound } from 'next/navigation';
+import { CopyOpenInAI } from '@/components/copy-open-in-ai';
+import { getLLMText, getPageImage, source } from '@/lib/source';
 import { getMDXComponents } from '@/mdx-components';
-import type { Metadata } from 'next';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
@@ -11,11 +12,16 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   if (!page) notFound();
 
   const MDX = page.data.body;
+  const markdown = await getLLMText(page);
+  const githubBaseUrl = 'https://github.com/koredeycode/EduCare/blob/main/content/docs';
+  const pagePath = page.slugs.join('/') + '.mdx';
+  const pageUrl = `${githubBaseUrl}/${pagePath}`;
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
+      <CopyOpenInAI markdown={markdown} pageUrl={pageUrl} />
       <DocsBody>
         <MDX
           components={getMDXComponents({

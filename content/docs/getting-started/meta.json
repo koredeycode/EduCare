@@ -1,0 +1,6 @@
+{
+  "title": "Getting Started",
+  "icon": "BookOpen",
+  "defaultOpen": true,
+  "pages": ["quickstart", "authentication", "errors", "rate-limits", "versioning"]
+}

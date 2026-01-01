@@ -19,13 +19,14 @@ The EduCare API uses **Bearer Token authentication** for all endpoints except th
 
 Include your API key in the `Authorization` header with the `Bearer` prefix:
 
-**cURL:**
+<Tabs items={['cURL', 'JavaScript', 'Python', 'PHP']}>
+  <Tab value="cURL">
 ```bash
 curl -H "Authorization: Bearer YOUR_API_KEY" \
   https://api.educare.com/v1/students
 ```
-
-**JavaScript:**
+  </Tab>
+  <Tab value="JavaScript">
 ```javascript
 fetch('https://api.educare.com/v1/students', {
   headers: {
@@ -35,8 +36,8 @@ fetch('https://api.educare.com/v1/students', {
   .then(res => res.json())
   .then(data => console.log(data));
 ```
-
-**Python:**
+  </Tab>
+  <Tab value="Python">
 ```python
 import requests
 
@@ -46,8 +47,8 @@ response = requests.get(
 )
 print(response.json())
 ```
-
-**PHP:**
+  </Tab>
+  <Tab value="PHP">
 ```php
 <?php
 $ch = curl_init('https://api.educare.com/v1/students');
@@ -60,6 +61,8 @@ curl_close($ch);
 echo $response;
 ?>
 ```
+  </Tab>
+</Tabs>
 
 ## Authentication Errors
 
