@@ -1,0 +1,97 @@
+---
+title: Authentication
+description: Learn how to authenticate your API requests to the EduCare API
+---
+
+# Authentication
+
+The EduCare API uses **Bearer Token authentication** for all endpoints except the health check. You'll need to include your API key in the `Authorization` header of every request.
+
+## Getting Your API Key
+
+1. **Create an Account**: Visit [dashboard.educare.com](https://dashboard.educare.com) and create a developer account.
+2. **Generate API Key**: Navigate to **Settings → API Keys** and click "Generate New Key".
+3. **Store Securely**: Copy your API key and store it securely. You won't be able to see it again!
+
+> ⚠️ **Security Best Practice**: Never expose your API key in client-side code or public repositories. Always use environment variables.
+
+## Using Your API Key
+
+Include your API key in the `Authorization` header with the `Bearer` prefix:
+
+**cURL:**
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  https://api.educare.com/v1/students
+```
+
+**JavaScript:**
+```javascript
+fetch('https://api.educare.com/v1/students', {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY'
+  }
+})
+  .then(res => res.json())
+  .then(data => console.log(data));
+```
+
+**Python:**
+```python
+import requests
+
+response = requests.get(
+    'https://api.educare.com/v1/students',
+    headers={'Authorization': 'Bearer YOUR_API_KEY'}
+)
+print(response.json())
+```
+
+**PHP:**
+```php
+<?php
+$ch = curl_init('https://api.educare.com/v1/students');
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer YOUR_API_KEY'
+]);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($ch);
+curl_close($ch);
+echo $response;
+?>
+```
+
+## Authentication Errors
+
+If your API key is invalid or missing, you'll receive a `401 Unauthorized` response:
+
+```json
+{
+  "error": "Invalid API key",
+  "code": "UNAUTHORIZED",
+  "status": 401
+}
+```
+
+### Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| Missing `Bearer` prefix | Ensure the header is `Bearer YOUR_API_KEY` (with space) |
+| Expired key | Generate a new key from the dashboard |
+| Wrong environment | Check if using production vs. sandbox key |
+| Key revoked | Contact support if you believe this is an error |
+
+## API Key Scopes
+
+| Scope | Access Level |
+|-------|--------------|
+| `read:students` | Read student data |
+| `write:students` | Create/update students |
+| `read:teachers` | Read teacher data |
+| `write:teachers` | Create/update teachers |
+| `read:classes` | Read class data |
+| `write:classes` | Create/update classes |
+| `admin` | Full access to all resources |
+
+> **Note**: Standard API keys include all scopes. Contact support for restricted scope keys.

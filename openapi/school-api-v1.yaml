@@ -1,0 +1,1983 @@
+openapi: 3.1.0
+info:
+  title: EduCare School Management API
+  version: 1.0.0
+  description: |
+    The EduCare API provides comprehensive endpoints for managing school operations including students, teachers, classes, grades, attendance, and announcements.
+    
+    ## Base URL
+    All API requests should be made to: `https://api.educare.com/v1`
+    
+    ## Authentication
+    All endpoints (except `/health`) require authentication via Bearer token in the Authorization header.
+  contact:
+    name: EduCare API Support
+    email: api-support@educare.com
+    url: https://support.educare.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.educare.com/v1
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Students
+    description: Manage student records and information
+  - name: Teachers
+    description: Manage teacher profiles and assignments
+  - name: Classes
+    description: Manage classes, rosters, and enrollments
+  - name: Grades
+    description: Submit and retrieve student grades
+  - name: Attendance
+    description: Track student attendance records
+  - name: Announcements
+    description: School-wide and class-specific announcements
+  - name: Health
+    description: API health and status checks
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Obtain your API key from the developer dashboard at https://dashboard.educare.com
+
+  schemas:
+    Student:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - grade_level
+      properties:
+        id:
+          type: integer
+          example: 1234
+        name:
+          type: string
+          example: Emma Wilson
+        email:
+          type: string
+          format: email
+          example: emma.wilson@student.educare.com
+        grade_level:
+          type: string
+          example: "11"
+        date_of_birth:
+          type: string
+          format: date
+          example: "2008-05-15"
+        guardian_name:
+          type: string
+          example: Sarah Wilson
+        guardian_email:
+          type: string
+          format: email
+          example: sarah.wilson@email.com
+        guardian_phone:
+          type: string
+          example: "+1-555-123-4567"
+        address:
+          type: string
+          example: "123 Oak Street, Springfield, IL 62701"
+        enrollment_date:
+          type: string
+          format: date
+          example: "2023-08-20"
+        created_at:
+          type: string
+          format: date-time
+          example: "2023-08-20T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-12-15T14:22:00Z"
+
+    StudentCreate:
+      type: object
+      required:
+        - name
+        - email
+        - grade_level
+      properties:
+        name:
+          type: string
+          example: James Rodriguez
+        email:
+          type: string
+          format: email
+          example: james.rodriguez@student.educare.com
+        grade_level:
+          type: string
+          example: "10"
+        date_of_birth:
+          type: string
+          format: date
+          example: "2009-03-22"
+        guardian_name:
+          type: string
+          example: Maria Rodriguez
+        guardian_email:
+          type: string
+          format: email
+          example: maria.rodriguez@email.com
+        guardian_phone:
+          type: string
+          example: "+1-555-987-6543"
+        address:
+          type: string
+          example: "456 Maple Avenue, Springfield, IL 62702"
+
+    StudentUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        grade_level:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+        guardian_name:
+          type: string
+        guardian_email:
+          type: string
+          format: email
+        guardian_phone:
+          type: string
+        address:
+          type: string
+
+    Teacher:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - department
+      properties:
+        id:
+          type: integer
+          example: 567
+        name:
+          type: string
+          example: Dr. Sarah Chen
+        email:
+          type: string
+          format: email
+          example: sarah.chen@educare.com
+        department:
+          type: string
+          example: Science
+        subjects:
+          type: array
+          items:
+            type: string
+          example: ["Physics", "Chemistry"]
+        phone:
+          type: string
+          example: "+1-555-222-3333"
+        office_room:
+          type: string
+          example: "B-204"
+        hire_date:
+          type: string
+          format: date
+          example: "2018-08-15"
+        created_at:
+          type: string
+          format: date-time
+          example: "2018-08-15T09:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-11-20T16:45:00Z"
+
+    TeacherCreate:
+      type: object
+      required:
+        - name
+        - email
+        - department
+      properties:
+        name:
+          type: string
+          example: Mr. David Johnson
+        email:
+          type: string
+          format: email
+          example: david.johnson@educare.com
+        department:
+          type: string
+          example: Mathematics
+        subjects:
+          type: array
+          items:
+            type: string
+          example: ["Algebra", "Calculus"]
+        phone:
+          type: string
+          example: "+1-555-444-5555"
+        office_room:
+          type: string
+          example: "A-102"
+
+    Class:
+      type: object
+      required:
+        - id
+        - name
+        - teacher_id
+        - schedule
+      properties:
+        id:
+          type: integer
+          example: 890
+        name:
+          type: string
+          example: Advanced Physics
+        teacher_id:
+          type: integer
+          example: 567
+        teacher:
+          $ref: '#/components/schemas/Teacher'
+        schedule:
+          type: string
+          example: "Mon/Wed/Fri 10:00-11:30"
+        room:
+          type: string
+          example: "Science Lab 3"
+        capacity:
+          type: integer
+          example: 30
+        enrolled_count:
+          type: integer
+          example: 25
+        semester:
+          type: string
+          example: "Spring 2026"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-12-01T08:00:00Z"
+
+    ClassCreate:
+      type: object
+      required:
+        - name
+        - teacher_id
+        - schedule
+      properties:
+        name:
+          type: string
+          example: Introduction to Biology
+        teacher_id:
+          type: integer
+          example: 568
+        schedule:
+          type: string
+          example: "Tue/Thu 13:00-14:30"
+        room:
+          type: string
+          example: "Biology Lab 1"
+        capacity:
+          type: integer
+          example: 28
+        semester:
+          type: string
+          example: "Spring 2026"
+
+    Grade:
+      type: object
+      required:
+        - id
+        - student_id
+        - class_id
+        - score
+        - term
+      properties:
+        id:
+          type: integer
+          example: 5678
+        student_id:
+          type: integer
+          example: 1234
+        class_id:
+          type: integer
+          example: 890
+        assignment_name:
+          type: string
+          example: "Midterm Exam"
+        score:
+          type: number
+          format: float
+          example: 92.5
+        max_score:
+          type: number
+          format: float
+          example: 100
+        letter_grade:
+          type: string
+          example: "A-"
+        term:
+          type: string
+          example: "Fall 2025"
+        graded_at:
+          type: string
+          format: date-time
+          example: "2025-11-15T14:30:00Z"
+        comments:
+          type: string
+          example: "Excellent work on the theoretical section"
+
+    GradeCreate:
+      type: object
+      required:
+        - student_id
+        - class_id
+        - score
+        - term
+      properties:
+        student_id:
+          type: integer
+          example: 1234
+        class_id:
+          type: integer
+          example: 890
+        assignment_name:
+          type: string
+          example: "Final Project"
+        score:
+          type: number
+          format: float
+          example: 88.0
+        max_score:
+          type: number
+          format: float
+          example: 100
+        term:
+          type: string
+          example: "Fall 2025"
+        comments:
+          type: string
+          example: "Good presentation skills"
+
+    Attendance:
+      type: object
+      required:
+        - id
+        - student_id
+        - class_id
+        - date
+        - status
+      properties:
+        id:
+          type: integer
+          example: 9012
+        student_id:
+          type: integer
+          example: 1234
+        class_id:
+          type: integer
+          example: 890
+        date:
+          type: string
+          format: date
+          example: "2025-12-15"
+        status:
+          type: string
+          enum: [present, absent, late, excused]
+          example: "present"
+        notes:
+          type: string
+          example: "Arrived 5 minutes early"
+        recorded_at:
+          type: string
+          format: date-time
+          example: "2025-12-15T10:05:00Z"
+
+    AttendanceCreate:
+      type: object
+      required:
+        - student_id
+        - class_id
+        - date
+        - status
+      properties:
+        student_id:
+          type: integer
+          example: 1234
+        class_id:
+          type: integer
+          example: 890
+        date:
+          type: string
+          format: date
+          example: "2025-12-16"
+        status:
+          type: string
+          enum: [present, absent, late, excused]
+          example: "present"
+        notes:
+          type: string
+          example: ""
+
+    Announcement:
+      type: object
+      required:
+        - id
+        - title
+        - content
+        - scope
+      properties:
+        id:
+          type: integer
+          example: 3456
+        title:
+          type: string
+          example: "Winter Break Schedule"
+        content:
+          type: string
+          example: "School will be closed from December 23rd to January 3rd. Classes resume January 6th, 2026."
+        scope:
+          type: string
+          enum: [school, class, grade_level]
+          example: "school"
+        class_id:
+          type: integer
+          nullable: true
+          example: null
+        grade_level:
+          type: string
+          nullable: true
+          example: null
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+          example: "high"
+        author_id:
+          type: integer
+          example: 567
+        published_at:
+          type: string
+          format: date-time
+          example: "2025-12-15T09:00:00Z"
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2026-01-06T08:00:00Z"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-12-14T16:30:00Z"
+
+    AnnouncementCreate:
+      type: object
+      required:
+        - title
+        - content
+        - scope
+      properties:
+        title:
+          type: string
+          example: "Parent-Teacher Conference"
+        content:
+          type: string
+          example: "Parent-teacher conferences will be held on January 15th from 4 PM to 8 PM."
+        scope:
+          type: string
+          enum: [school, class, grade_level]
+          example: "school"
+        class_id:
+          type: integer
+          nullable: true
+        grade_level:
+          type: string
+          nullable: true
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+          example: "normal"
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    Roster:
+      type: object
+      properties:
+        class:
+          $ref: '#/components/schemas/Class'
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/Student'
+        total_count:
+          type: integer
+          example: 25
+
+    EnrollmentRequest:
+      type: object
+      required:
+        - student_id
+      properties:
+        student_id:
+          type: integer
+          example: 1234
+
+    EnrollmentResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Student successfully enrolled"
+        class_id:
+          type: integer
+          example: 890
+        student_id:
+          type: integer
+          example: 1234
+        enrolled_at:
+          type: string
+          format: date-time
+          example: "2025-12-31T10:30:00Z"
+
+    HealthCheck:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "healthy"
+        version:
+          type: string
+          example: "1.0.0"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-12-31T21:32:52Z"
+        uptime:
+          type: string
+          example: "45d 12h 30m"
+
+    PaginatedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: {}
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              example: 1
+            per_page:
+              type: integer
+              example: 20
+            total:
+              type: integer
+              example: 150
+            total_pages:
+              type: integer
+              example: 8
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - code
+        - status
+      properties:
+        error:
+          type: string
+          example: "Resource not found"
+        code:
+          type: string
+          example: "NOT_FOUND"
+        status:
+          type: integer
+          example: 404
+        details:
+          type: object
+          additionalProperties: true
+          example:
+            resource: "student"
+            id: 9999
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+    PerPageParam:
+      name: per_page
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+        maximum: 100
+    SearchParam:
+      name: search
+      in: query
+      description: Search term to filter results
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: Bad Request - Invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Validation failed: email is required"
+            code: "VALIDATION_ERROR"
+            status: 400
+    Unauthorized:
+      description: Unauthorized - Invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Invalid API key"
+            code: "UNAUTHORIZED"
+            status: 401
+    Forbidden:
+      description: Forbidden - Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "You do not have permission to access this resource"
+            code: "FORBIDDEN"
+            status: 403
+    NotFound:
+      description: Not Found - Resource does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Student not found"
+            code: "NOT_FOUND"
+            status: 404
+    TooManyRequests:
+      description: Too Many Requests - Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Rate limit exceeded. Please wait before making more requests."
+            code: "RATE_LIMITED"
+            status: 429
+    InternalError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "An unexpected error occurred"
+            code: "INTERNAL_ERROR"
+            status: 500
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health Check
+      description: Check the API health status. This endpoint does not require authentication.
+      operationId: healthCheck
+      security: []
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl https://api.educare.com/v1/health
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/health')
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get('https://api.educare.com/v1/health')
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/health');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+  /students:
+    get:
+      tags:
+        - Students
+      summary: List all students
+      description: Retrieve a paginated list of all students in the school system.
+      operationId: listStudents
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/SearchParam'
+        - name: grade_level
+          in: query
+          description: Filter by grade level
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of students
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Student'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -H "Authorization: Bearer YOUR_API_KEY" \
+              "https://api.educare.com/v1/students?page=1&per_page=20"
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/students?page=1&per_page=20', {
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY'
+              }
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get(
+                'https://api.educare.com/v1/students',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'},
+                params={'page': 1, 'per_page': 20}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/students?page=1&per_page=20');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+    post:
+      tags:
+        - Students
+      summary: Create a new student
+      description: Add a new student to the school system.
+      operationId: createStudent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentCreate'
+      responses:
+        '201':
+          description: Student created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -X POST https://api.educare.com/v1/students \
+              -H "Authorization: Bearer YOUR_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "name": "James Rodriguez",
+                "email": "james.rodriguez@student.educare.com",
+                "grade_level": "10"
+              }'
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/students', {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                name: 'James Rodriguez',
+                email: 'james.rodriguez@student.educare.com',
+                grade_level: '10'
+              })
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.post(
+                'https://api.educare.com/v1/students',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'},
+                json={
+                    'name': 'James Rodriguez',
+                    'email': 'james.rodriguez@student.educare.com',
+                    'grade_level': '10'
+                }
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $data = json_encode([
+                'name' => 'James Rodriguez',
+                'email' => 'james.rodriguez@student.educare.com',
+                'grade_level' => '10'
+            ]);
+            
+            $ch = curl_init('https://api.educare.com/v1/students');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer YOUR_API_KEY',
+                'Content-Type: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+  /students/{id}:
+    get:
+      tags:
+        - Students
+      summary: Get a student by ID
+      description: Retrieve detailed information about a specific student.
+      operationId: getStudent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The student ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Student details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -H "Authorization: Bearer YOUR_API_KEY" \
+              https://api.educare.com/v1/students/1234
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/students/1234', {
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY'
+              }
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get(
+                'https://api.educare.com/v1/students/1234',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/students/1234');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+    put:
+      tags:
+        - Students
+      summary: Update a student
+      description: Update an existing student's information.
+      operationId: updateStudent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentUpdate'
+      responses:
+        '200':
+          description: Student updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Students
+      summary: Delete a student
+      description: Remove a student from the system.
+      operationId: deleteStudent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Student deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /students/{id}/attendance:
+    get:
+      tags:
+        - Attendance
+      summary: Get student attendance records
+      description: Retrieve attendance records for a specific student.
+      operationId: getStudentAttendance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: class_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Attendance records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  student_id:
+                    type: integer
+                  records:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Attendance'
+                  summary:
+                    type: object
+                    properties:
+                      total_days:
+                        type: integer
+                      present:
+                        type: integer
+                      absent:
+                        type: integer
+                      late:
+                        type: integer
+                      excused:
+                        type: integer
+                      attendance_rate:
+                        type: number
+                        format: float
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -H "Authorization: Bearer YOUR_API_KEY" \
+              "https://api.educare.com/v1/students/1234/attendance?start_date=2025-12-01&end_date=2025-12-31"
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/students/1234/attendance?start_date=2025-12-01&end_date=2025-12-31', {
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY'
+              }
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get(
+                'https://api.educare.com/v1/students/1234/attendance',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'},
+                params={'start_date': '2025-12-01', 'end_date': '2025-12-31'}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/students/1234/attendance?start_date=2025-12-01&end_date=2025-12-31');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+  /teachers:
+    get:
+      tags:
+        - Teachers
+      summary: List all teachers
+      description: Retrieve a paginated list of all teachers.
+      operationId: listTeachers
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/SearchParam'
+        - name: department
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of teachers
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Teacher'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -H "Authorization: Bearer YOUR_API_KEY" \
+              "https://api.educare.com/v1/teachers"
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/teachers', {
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY'
+              }
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get(
+                'https://api.educare.com/v1/teachers',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/teachers');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+    post:
+      tags:
+        - Teachers
+      summary: Create a new teacher
+      description: Add a new teacher to the system.
+      operationId: createTeacher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherCreate'
+      responses:
+        '201':
+          description: Teacher created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /teachers/{id}:
+    get:
+      tags:
+        - Teachers
+      summary: Get a teacher by ID
+      operationId: getTeacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Teacher details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Teachers
+      summary: Update a teacher
+      operationId: updateTeacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherCreate'
+      responses:
+        '200':
+          description: Teacher updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Teachers
+      summary: Delete a teacher
+      operationId: deleteTeacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Teacher deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /classes:
+    get:
+      tags:
+        - Classes
+      summary: List all classes
+      description: Retrieve a paginated list of all classes.
+      operationId: listClasses
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: semester
+          in: query
+          schema:
+            type: string
+        - name: teacher_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of classes
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Class'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -H "Authorization: Bearer YOUR_API_KEY" \
+              "https://api.educare.com/v1/classes"
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/classes', {
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY'
+              }
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get(
+                'https://api.educare.com/v1/classes',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/classes');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+    post:
+      tags:
+        - Classes
+      summary: Create a new class
+      operationId: createClass
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassCreate'
+      responses:
+        '201':
+          description: Class created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /classes/{id}:
+    get:
+      tags:
+        - Classes
+      summary: Get a class by ID
+      operationId: getClass
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Class details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Classes
+      summary: Update a class
+      operationId: updateClass
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassCreate'
+      responses:
+        '200':
+          description: Class updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Classes
+      summary: Delete a class
+      operationId: deleteClass
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Class deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /classes/{id}/roster:
+    get:
+      tags:
+        - Classes
+      summary: Get class roster
+      description: Retrieve the list of students enrolled in a specific class.
+      operationId: getClassRoster
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Class roster
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Roster'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -H "Authorization: Bearer YOUR_API_KEY" \
+              https://api.educare.com/v1/classes/890/roster
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/classes/890/roster', {
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY'
+              }
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get(
+                'https://api.educare.com/v1/classes/890/roster',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/classes/890/roster');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+  /classes/{id}/enroll:
+    post:
+      tags:
+        - Classes
+      summary: Enroll a student in a class
+      description: Add a student to the class roster.
+      operationId: enrollStudent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnrollmentRequest'
+      responses:
+        '201':
+          description: Student enrolled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -X POST https://api.educare.com/v1/classes/890/enroll \
+              -H "Authorization: Bearer YOUR_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{"student_id": 1234}'
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/classes/890/enroll', {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ student_id: 1234 })
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.post(
+                'https://api.educare.com/v1/classes/890/enroll',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'},
+                json={'student_id': 1234}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $data = json_encode(['student_id' => 1234]);
+            
+            $ch = curl_init('https://api.educare.com/v1/classes/890/enroll');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer YOUR_API_KEY',
+                'Content-Type: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+  /grades:
+    get:
+      tags:
+        - Grades
+      summary: List grades
+      description: Retrieve grades with optional filtering by student, class, or term.
+      operationId: listGrades
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: student_id
+          in: query
+          schema:
+            type: integer
+        - name: class_id
+          in: query
+          schema:
+            type: integer
+        - name: term
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of grades
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Grade'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -H "Authorization: Bearer YOUR_API_KEY" \
+              "https://api.educare.com/v1/grades?student_id=1234&term=Fall%202025"
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/grades?student_id=1234&term=Fall%202025', {
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY'
+              }
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get(
+                'https://api.educare.com/v1/grades',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'},
+                params={'student_id': 1234, 'term': 'Fall 2025'}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/grades?student_id=1234&term=Fall%202025');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+    post:
+      tags:
+        - Grades
+      summary: Submit a grade
+      description: Submit a new grade for a student in a class.
+      operationId: createGrade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeCreate'
+      responses:
+        '201':
+          description: Grade submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -X POST https://api.educare.com/v1/grades \
+              -H "Authorization: Bearer YOUR_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "student_id": 1234,
+                "class_id": 890,
+                "assignment_name": "Final Project",
+                "score": 88.0,
+                "max_score": 100,
+                "term": "Fall 2025"
+              }'
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/grades', {
+              method: 'POST',
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                student_id: 1234,
+                class_id: 890,
+                assignment_name: 'Final Project',
+                score: 88.0,
+                max_score: 100,
+                term: 'Fall 2025'
+              })
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.post(
+                'https://api.educare.com/v1/grades',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'},
+                json={
+                    'student_id': 1234,
+                    'class_id': 890,
+                    'assignment_name': 'Final Project',
+                    'score': 88.0,
+                    'max_score': 100,
+                    'term': 'Fall 2025'
+                }
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $data = json_encode([
+                'student_id' => 1234,
+                'class_id' => 890,
+                'assignment_name' => 'Final Project',
+                'score' => 88.0,
+                'max_score' => 100,
+                'term' => 'Fall 2025'
+            ]);
+            
+            $ch = curl_init('https://api.educare.com/v1/grades');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer YOUR_API_KEY',
+                'Content-Type: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+  /attendance:
+    get:
+      tags:
+        - Attendance
+      summary: List attendance records
+      description: Retrieve attendance records with filtering options.
+      operationId: listAttendance
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: class_id
+          in: query
+          schema:
+            type: integer
+        - name: date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [present, absent, late, excused]
+      responses:
+        '200':
+          description: List of attendance records
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Attendance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags:
+        - Attendance
+      summary: Record attendance
+      description: Submit an attendance record for a student.
+      operationId: createAttendance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceCreate'
+      responses:
+        '201':
+          description: Attendance recorded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /announcements:
+    get:
+      tags:
+        - Announcements
+      summary: List announcements
+      description: Retrieve announcements with optional filtering.
+      operationId: listAnnouncements
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - name: scope
+          in: query
+          schema:
+            type: string
+            enum: [school, class, grade_level]
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [low, normal, high, urgent]
+        - name: active_only
+          in: query
+          description: Only return non-expired announcements
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: List of announcements
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Announcement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl -H "Authorization: Bearer YOUR_API_KEY" \
+              "https://api.educare.com/v1/announcements?scope=school&active_only=true"
+        - lang: JavaScript
+          source: |
+            fetch('https://api.educare.com/v1/announcements?scope=school&active_only=true', {
+              headers: {
+                'Authorization': 'Bearer YOUR_API_KEY'
+              }
+            })
+              .then(res => res.json())
+              .then(data => console.log(data));
+        - lang: Python
+          source: |
+            import requests
+            
+            response = requests.get(
+                'https://api.educare.com/v1/announcements',
+                headers={'Authorization': 'Bearer YOUR_API_KEY'},
+                params={'scope': 'school', 'active_only': True}
+            )
+            print(response.json())
+        - lang: PHP
+          source: |
+            <?php
+            $ch = curl_init('https://api.educare.com/v1/announcements?scope=school&active_only=true');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            echo $response;
+            ?>
+
+    post:
+      tags:
+        - Announcements
+      summary: Create an announcement
+      description: Create a new school or class announcement.
+      operationId: createAnnouncement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementCreate'
+      responses:
+        '201':
+          description: Announcement created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Announcement'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /announcements/{id}:
+    get:
+      tags:
+        - Announcements
+      summary: Get an announcement by ID
+      operationId: getAnnouncement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Announcement details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Announcement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Announcements
+      summary: Update an announcement
+      operationId: updateAnnouncement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementCreate'
+      responses:
+        '200':
+          description: Announcement updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Announcement'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Announcements
+      summary: Delete an announcement
+      operationId: deleteAnnouncement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Announcement deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'

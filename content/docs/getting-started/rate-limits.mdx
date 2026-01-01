@@ -1,0 +1,114 @@
+---
+title: Rate Limits
+description: Understanding API rate limits and best practices for the EduCare API
+---
+
+# Rate Limits
+
+The EduCare API implements rate limiting to ensure fair usage and maintain service stability for all users. Understanding these limits helps you build reliable integrations.
+
+## Rate Limit Overview
+
+| Plan | Requests per Hour | Burst Limit |
+|------|-------------------|-------------|
+| **Standard** | 1,000 | 100 requests/minute |
+| **Professional** | 10,000 | 500 requests/minute |
+| **Enterprise** | Custom | Custom |
+
+> **Need higher limits?** Contact sales@educare.com to discuss enterprise options.
+
+## Rate Limit Headers
+
+Every API response includes headers to help you track your usage:
+
+```http
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 950
+X-RateLimit-Reset: 1735689600
+```
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed per hour |
+| `X-RateLimit-Remaining` | Remaining requests in current window |
+| `X-RateLimit-Reset` | Unix timestamp when the limit resets |
+
+## Handling Rate Limits
+
+When you exceed the rate limit, you'll receive a `429 Too Many Requests` response:
+
+```json
+{
+  "error": "Rate limit exceeded. Please wait before making more requests.",
+  "code": "RATE_LIMITED",
+  "status": 429,
+  "details": {
+    "retry_after": 60
+  }
+}
+```
+
+### Retry Logic Example
+
+```javascript
+async function apiRequest(url, options, retries = 3) {
+  const response = await fetch(url, options);
+  
+  if (response.status === 429 && retries > 0) {
+    const retryAfter = parseInt(response.headers.get('Retry-After')) || 60;
+    console.log(`Rate limited. Retrying in ${retryAfter} seconds...`);
+    await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+    return apiRequest(url, options, retries - 1);
+  }
+  
+  return response;
+}
+```
+
+## Best Practices
+
+### 1. Cache Responses
+
+Cache frequently accessed data to reduce API calls.
+
+### 2. Use Batch Endpoints
+
+When fetching multiple resources, use pagination instead of individual requests:
+
+```javascript
+// ✅ Good: Fetch paginated list
+const students = await fetch('/v1/students?page=1&per_page=100');
+
+// ❌ Avoid: Multiple individual requests
+for (const id of studentIds) {
+  await fetch(`/v1/students/${id}`);
+}
+```
+
+### 3. Use Exponential Backoff
+
+For retry logic, increase wait time with each attempt:
+
+```javascript
+async function withBackoff(fn, maxRetries = 5) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (error.status === 429) {
+        const delay = Math.pow(2, i) * 1000; // 1s, 2s, 4s, 8s, 16s
+        await new Promise(r => setTimeout(r, delay));
+      } else {
+        throw error;
+      }
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+```
+
+## Exemptions
+
+The following endpoints are not rate limited:
+
+- `GET /health` - Health check endpoint

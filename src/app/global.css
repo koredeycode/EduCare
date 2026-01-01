@@ -1,3 +1,40 @@
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
+@import 'fumadocs-openapi/css/preset.css';
+
+/* EduCare Theme - Professional teal/blue palette */
+:root {
+  --fd-primary: 170 70% 40%;
+  --fd-primary-foreground: 0 0% 100%;
+  --fd-muted: 170 20% 95%;
+  --fd-muted-foreground: 170 10% 40%;
+  --fd-accent: 170 40% 90%;
+  --fd-accent-foreground: 170 50% 30%;
+}
+
+.dark {
+  --fd-primary: 170 60% 50%;
+  --fd-primary-foreground: 0 0% 100%;
+  --fd-muted: 170 20% 15%;
+  --fd-muted-foreground: 170 10% 70%;
+  --fd-accent: 170 30% 20%;
+  --fd-accent-foreground: 170 40% 80%;
+}
+
+/* Custom styling for API reference pages */
+.openapi-method-get {
+  --method-color: 142 76% 36%;
+}
+
+.openapi-method-post {
+  --method-color: 217 91% 60%;
+}
+
+.openapi-method-put {
+  --method-color: 38 92% 50%;
+}
+
+.openapi-method-delete {
+  --method-color: 0 84% 60%;
+}

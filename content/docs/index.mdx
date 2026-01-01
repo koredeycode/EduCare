@@ -1,13 +1,93 @@
 ---
-title: Hello World
-description: Your first document
+title: EduCare API Documentation
+description: Comprehensive API documentation for the EduCare School Management System
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+# EduCare School Management API
 
-## What is Next?
+Welcome to the **EduCare API** documentation. Our RESTful API provides comprehensive endpoints for managing school operations including students, teachers, classes, grades, attendance, and announcements.
+
+> **Base URL**: `https://api.educare.com/v1`
+
+## Quick Start
+
+Get up and running with the EduCare API in minutes:
+
+### 1. Get Your API Key
+
+Sign up at [dashboard.educare.com](https://dashboard.educare.com) to obtain your API key.
+
+### 2. Make Your First Request
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  https://api.educare.com/v1/health
+```
+
+### 3. Explore the API
+
+Browse the [API Reference](/docs/api-reference/listStudents) to discover all available endpoints.
+
+## Key Features
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card 
+    title="Student Management" 
+    href="/docs/api-reference/listStudents"
+  >
+    Create, update, and manage student records with comprehensive profile data.
+  </Card>
+  <Card 
+    title="Teacher Management" 
+    href="/docs/api-reference/listTeachers"
+  >
+    Manage teacher profiles, departments, and subject assignments.
+  </Card>
+  <Card 
+    title="Class Management" 
+    href="/docs/api-reference/listClasses"
+  >
+    Handle class schedules, enrollments, and rosters.
+  </Card>
+  <Card 
+    title="Grades & Attendance" 
+    href="/docs/api-reference/listGrades"
+  >
+    Submit grades, track attendance, and generate academic reports.
+  </Card>
 </Cards>
+
+## Getting Started Guides
+
+<Cards>
+  <Card 
+    title="Authentication" 
+    href="/docs/getting-started/authentication"
+  >
+    Learn how to authenticate your API requests.
+  </Card>
+  <Card 
+    title="Error Handling" 
+    href="/docs/getting-started/errors"
+  >
+    Understand error responses and how to handle them.
+  </Card>
+  <Card 
+    title="Rate Limits" 
+    href="/docs/getting-started/rate-limits"
+  >
+    Learn about API rate limits and best practices.
+  </Card>
+  <Card 
+    title="Versioning" 
+    href="/docs/getting-started/versioning"
+  >
+    Understand our API versioning strategy.
+  </Card>
+</Cards>
+
+## Need Help?
+
+- **Support**: [support@educare.com](mailto:support@educare.com)
+- **Status Page**: [status.educare.com](https://status.educare.com)
+- **Developer Dashboard**: [dashboard.educare.com](https://dashboard.educare.com)

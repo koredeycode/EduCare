@@ -1,0 +1,111 @@
+---
+title: API Versioning
+description: Understanding the EduCare API versioning strategy and migration guidelines
+---
+
+# API Versioning
+
+The EduCare API uses URL-based versioning to ensure backward compatibility while allowing us to evolve the API over time.
+
+## Current Version
+
+> **Current Version**: v1  
+> **Base URL**: `https://api.educare.com/v1`
+
+## Versioning Strategy
+
+We include the version number in the URL path:
+
+```
+https://api.educare.com/v1/students
+https://api.educare.com/v1/teachers
+https://api.educare.com/v1/classes
+```
+
+## Version Lifecycle
+
+| Stage | Duration | Description |
+|-------|----------|-------------|
+| **Current** | Ongoing | Latest stable version, actively maintained |
+| **Supported** | 12 months | Previous version, receives security updates |
+| **Deprecated** | 6 months | Scheduled for removal, migration recommended |
+| **Sunset** | - | No longer available |
+
+## Deprecation Policy
+
+When we deprecate an API version:
+
+1. **Announcement**: 12 months before sunset
+2. **Documentation**: Migration guides published
+3. **Headers**: Deprecation warnings in responses
+4. **Support**: Assistance available during transition
+
+### Deprecation Headers
+
+Deprecated endpoints include warning headers:
+
+```http
+Deprecation: true
+Sunset: Sat, 31 Dec 2026 23:59:59 GMT
+Link: <https://api.educare.com/v2/students>; rel="successor-version"
+```
+
+## Breaking vs. Non-Breaking Changes
+
+### Non-Breaking Changes (No Version Bump)
+
+These changes are backward compatible:
+
+- Adding new endpoints
+- Adding optional request parameters
+- Adding new fields to responses
+- Adding new enum values
+- Improving error messages
+
+### Breaking Changes (New Version)
+
+These changes require a new version:
+
+- Removing endpoints
+- Removing or renaming response fields
+- Changing field data types
+- Modifying required parameters
+- Changing authentication methods
+
+## Migration Guide
+
+When migrating between versions:
+
+> **Tip**: We recommend testing the new version in a staging environment before updating production.
+
+### Step 1: Review Changes
+
+Check the changelog for breaking changes that affect your integration.
+
+### Step 2: Update Base URL
+
+```diff
+- const BASE_URL = 'https://api.educare.com/v1';
++ const BASE_URL = 'https://api.educare.com/v2';
+```
+
+### Step 3: Test Thoroughly
+
+- Run your test suite against the new version
+- Verify all endpoints work as expected
+- Check error handling still functions correctly
+
+## Upcoming: v2
+
+We're working on v2 of the EduCare API with exciting improvements:
+
+- GraphQL support
+- Real-time webhooks
+- Enhanced filtering and sorting
+- Batch operations
+
+> ⚠️ v2 is currently in beta. Sign up at dashboard.educare.com for early access.
+
+## Questions?
+
+Contact api-support@educare.com for version-related questions or migration assistance.
